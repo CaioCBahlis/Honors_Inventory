@@ -40,12 +40,3 @@ func ConnectToDatabase() {
 
 	log.Println("Successfully connected to database :)")
 }
-
-func InsertIntoDatabase(room_name, building_type string) {
-	Sql_Query := "INSERT INTO locations(room_name, building_type) VALUES ($1, $2)"
-	res, err := Connection.Exec(Sql_Query, room_name, building_type)
-	if err != nil {
-		log.Fatalf("Failed to insert into locations: %v", err)
-	}
-	fmt.Println(res)
-}

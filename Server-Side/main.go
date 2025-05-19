@@ -18,8 +18,7 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	ConnectToDatabase()
-	InsertIntoDatabase("Honors 1401A", "Classroom")
-	return
+	defer Connection.Close()
 
 	ReactBuildPath := filepath.Join("..", "honors-client-side", "build")
 	BuildDir := http.Dir(ReactBuildPath)
