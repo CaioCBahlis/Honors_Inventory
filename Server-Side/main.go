@@ -17,7 +17,9 @@ func main() {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+
 	ConnectToDatabase()
+	RouterSetup(r, Connection)
 	defer Connection.Close()
 
 	ReactBuildPath := filepath.Join("..", "honors-client-side", "build")
@@ -29,10 +31,6 @@ func main() {
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, filepath.Join(ReactBuildPath, "index.html"))
-	})
-
-	r.Get("/heartbeat", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("<3"))
 	})
 
 	http.ListenAndServe(":8080", r)

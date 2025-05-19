@@ -7,11 +7,11 @@ import (
 )
 
 type Equipment struct {
-	Id                    int
-	Model                 string
-	Equipment_type        string
-	Equipment_Status      string
-	Equipment_Location_ID int
+	Id                    int    `json:"id"`
+	Model                 string `json:"model"`
+	Equipment_type        string `json:"equipment_type"`
+	Equipment_Status      string `json:"equipment_status"`
+	Equipment_Location_ID int    `json:"equipment_location_id"`
 }
 
 func CreateEquipments(Connection *sql.DB, model, equipment_type, equipment_status string) error {
@@ -55,6 +55,7 @@ func RemoveEquipment(Connection *sql.DB, id int) error {
 		log.Printf("Fail Deleting Items from Equipment Table: %v", err)
 		return err
 	}
+
 	return nil
 }
 
