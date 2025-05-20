@@ -144,6 +144,23 @@ func EditEquipment(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func GetEquipments(w http.ResponseWriter, r *http.Request) {
+	Equipments, err := Equipments_DB.EquipmentsForMaintenace(Connection)
+	if err != nil {
+		log.Printf("API coudln't retrieve items for maintenace: %v\n", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	MyJson, err := json.Marshal(Equipments)
+	if err != nil {
+		log.Printf("Failed to convert Equipments to JSON: %v\n", err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(MyJson)
+}
+
 func Heartbeat(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("<3"))
 	w.WriteHeader(http.StatusOK)

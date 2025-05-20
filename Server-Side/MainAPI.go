@@ -9,8 +9,9 @@ import (
 func RouterSetup(r *chi.Mux, db *sql.DB) {
 	API.Init_DB(db)
 
-	r.Get("/Heartbeat", API.Heartbeat)
+	r.Get("/heartbeat", API.Heartbeat)
 	r.Get("/API/GetMaintenance", API.GetMaintenanceEquipment)
+	r.Get("/API/GetEquipments", API.GetEquipments)
 
 	r.Post("/API/AddEquipment", API.AddEquipment)
 	r.Post("/API/SearchEquipment", API.SearchEquipment)

@@ -105,3 +105,27 @@ func EquipmentTransfer(Connection *sql.DB, id int, room_name, building_type stri
 	}
 	return nil
 }
+
+func GetEquipments(Connection *sql.DB) ([]Equipment, error) {
+	Sql_Query := "SELECT * FROM equipment"
+
+	rows, err := Connection.Query(Sql_Query)
+	if err != nil {
+		log.Printf("Fail Selecting items from Equipment Table: %v", err)
+		return nil, err
+	}
+
+	var Equipments []Equipment
+	defer rows.Close()
+	for rows.Next() {
+		var MyEquipment Equipment
+		err = rows.Scan(&MyEquipment.Id, &MyEquipment.Model, &MyEquipment.Equipment_type, &MyEquipment.Equipment_Status, &MyEquipment.Equipment_Location_ID)
+		if err != nil {
+			log.Printf("Error Scanning Rows: %v", err)
+			return nil, err
+		}
+		Equipments = append(Equipments, MyEquipment)
+	}
+
+	return Equipments, nil
+}
