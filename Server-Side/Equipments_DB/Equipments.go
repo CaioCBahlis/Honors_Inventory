@@ -7,17 +7,18 @@ import (
 )
 
 type Equipment struct {
-	Id                    int    `json:"id"`
+	Id                    string `json:"id"`
 	Model                 string `json:"model"`
 	Equipment_type        string `json:"equipment_type"`
 	Equipment_Status      string `json:"equipment_status"`
 	Equipment_Location_ID int    `json:"equipment_location_id"`
 }
 
-func CreateEquipments(Connection *sql.DB, model, equipment_type, equipment_status string) error {
+func CreateEquipments(Connection *sql.DB, model, equipment_type string) error {
 	Sql_Query := "INSERT INTO equipment(model, equipment_type, equipment_status, location_id) VALUES ($1, $2, $3, $4)"
 
-	location_id := 1 //All New Equipments default value is the storage (Foreign Key = 1);
+	location_id := 1              //All New Equipments default value is the storage (Foreign Key = 1);
+	equipment_status := "Working" // I figured it doesn't make sense to add broken equipment to the Inventory, so default is Working
 
 	_, err := Connection.Exec(Sql_Query, model, equipment_type, equipment_status, location_id)
 	if err != nil {
@@ -128,4 +129,25 @@ func GetEquipments(Connection *sql.DB) ([]Equipment, error) {
 	}
 
 	return Equipments, nil
+}
+
+func GetEquipmentsInfo(Connection *sql.DB) ([]int, error) {
+	MyStatsQuery := `
+	SELECT
+		COUNT (id) AS total,
+		COUNT(CASE WHEN location_id=3 THEN 1 END) AS Warehouse,
+		COUNT(CASE WHEN equipment_status IN ('Needs Maintenance', 'Broken') THEN 1 END) as Maintenance
+	FROM equipment;
+    `
+
+	var total, Warehouse, Maintenance int
+	rows := Connection.QueryRow(MyStatsQuery)
+
+	err := rows.Scan(&total, &Warehouse, &Maintenance)
+	if err != nil {
+		log.Printf("Error Scanning Equipment Info: %v", err)
+		return nil, err
+	}
+
+	return []int{total, Warehouse, Maintenance}, nil
 }

@@ -21,25 +21,6 @@ func Init_DB(Connect *sql.DB) {
 	Connection = Connect
 }
 
-func GetMaintenanceEquipment(w http.ResponseWriter, r *http.Request) {
-	Items, err := Equipments_DB.EquipmentsForMaintenace(Connection)
-	if err != nil {
-		log.Printf("API coudln't retrieve items for maitenance: %v\n", err)
-		http.Error(w, http.StatusText(500), 500)
-	}
-
-	MyJson, err := json.Marshal(Items)
-	if err != nil {
-		log.Printf("Failed to convert Maintenace Equipments to JSON: %v\n", err)
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(MyJson)
-}
-
 func AddEquipment(w http.ResponseWriter, r *http.Request) {
 	var NewEquipment Equipments_DB.Equipment
 
@@ -50,7 +31,7 @@ func AddEquipment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = Equipments_DB.CreateEquipments(Connection, NewEquipment.Model, NewEquipment.Equipment_type, NewEquipment.Equipment_Status)
+	err = Equipments_DB.CreateEquipments(Connection, NewEquipment.Model, NewEquipment.Equipment_type)
 	if err != nil {
 		log.Printf("API coudln't insert new Equipment: %v\n", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -106,6 +87,7 @@ func TransferEquipment(w http.ResponseWriter, r *http.Request) {
 	ID, _ := strconv.Atoi(id)
 
 	var NewLocation Location
+	log.Println(NewLocation.Room_name, NewLocation.Building_type)
 
 	err := json.NewDecoder(r.Body).Decode(&NewLocation)
 	if err != nil {
@@ -142,23 +124,6 @@ func EditEquipment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-}
-
-func GetEquipments(w http.ResponseWriter, r *http.Request) {
-	Equipments, err := Equipments_DB.EquipmentsForMaintenace(Connection)
-	if err != nil {
-		log.Printf("API coudln't retrieve items for maintenace: %v\n", err)
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		return
-	}
-	MyJson, err := json.Marshal(Equipments)
-	if err != nil {
-		log.Printf("Failed to convert Equipments to JSON: %v\n", err)
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(MyJson)
 }
 
 func Heartbeat(w http.ResponseWriter, r *http.Request) {

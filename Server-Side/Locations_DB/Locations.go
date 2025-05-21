@@ -2,6 +2,7 @@ package Locations_DB
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 )
 
@@ -19,6 +20,7 @@ func CreateLocations(Connection *sql.DB, room_name, building_type string) error 
 
 func GetLocationId(Connection *sql.DB, room_name, building_type string) (int, error) {
 	Sql_Query := "SELECT id FROM locations WHERE room_name = $1 AND building_type = $2;"
+	fmt.Println(room_name, building_type)
 
 	var id int
 	rows, err := Connection.Query(Sql_Query, room_name, building_type)
