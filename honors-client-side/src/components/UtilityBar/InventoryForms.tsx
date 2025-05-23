@@ -1,9 +1,9 @@
 import React from "react";
 
-export function CreateForm(props: {id:string}){
+export function CreateForm(props: {id:string, onClose: () => void, UpdateRender: () => void}){
     return (
         <div id={props.id}>
-            <form id={"CreateInput"} onSubmit={(event) => HandleSubmit(event, "AddEquipment", "POST")}>
+            <form id={"CreateInput"} onSubmit={(event) => HandleSubmit(event, "AddEquipment", "POST", props.onClose, props.UpdateRender)}>
                 <label> Model
                     <input type={"text"} name={"model"} required/>
                 </label>
@@ -16,10 +16,10 @@ export function CreateForm(props: {id:string}){
     )
 }
 
-export function EditForm(props: {id:string}){
+export function EditForm(props: {id:string, onClose: () => void, UpdateRender: () => void}){
     return (
         <div id={props.id}>
-            <form id={"CreateInput"} onSubmit={(event) => HandleSubmit(event, "EditEquipment", "PUT")}>
+            <form id={"CreateInput"} onSubmit={(event) => HandleSubmit(event, "EditEquipment", "PUT", props.onClose, props.UpdateRender)}>
 
                 <label> Equipment_ID
                     <input type={"text"} name={"id"} required/>
@@ -42,10 +42,10 @@ export function EditForm(props: {id:string}){
     )
 }
 
-export function TransferForm(props: { id: string }) {
+export function TransferForm(props: { id: string, onClose: () => void , UpdateRender: () => void}) {
     return (
         <div id={props.id}>
-            <form id={"CreateInput"} onSubmit={(event) => HandleSubmit(event, "TransferEquipment", "PUT")}>
+            <form id={"CreateInput"} onSubmit={(event) => HandleSubmit(event, "TransferEquipment", "PUT", props.onClose, props.UpdateRender)}>
                 <label> Equipment ID
                     <input type={"text"} name={"id"} required/>
                 </label>
@@ -59,10 +59,10 @@ export function TransferForm(props: { id: string }) {
     )
 }
 
-export function DeleteForm(props: {id:string}){
+export function DeleteForm(props: {id:string, onClose: () => void, UpdateRender: () => void}){
     return (
         <div id={props.id}>
-            <form id={"CreateInput"} onSubmit={(event) => HandleSubmit(event, "RemoveEquipment", "DELETE")} >
+            <form id={"CreateInput"} onSubmit={(event) => HandleSubmit(event, "RemoveEquipment", "DELETE", props.onClose, props.UpdateRender)} >
                 <label> Equipment ID
                     <input type={"text"} name={"id"} required/>
                 </label>
@@ -74,10 +74,13 @@ export function DeleteForm(props: {id:string}){
 }
 
 
-function HandleSubmit(event: React.FormEvent<HTMLFormElement>, endpoint: string, Method: string) {
+function HandleSubmit(event: React.FormEvent<HTMLFormElement>, endpoint: string, Method: string, onClose: () => void, UpdateRender: () => void) {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
     const data: Record<string, string> = {};
+
+    onClose()
+    UpdateRender()
 
     formData.forEach((value, key) => {
         data[key] = value.toString();

@@ -1,13 +1,13 @@
 import React, {FC, SetStateAction, useState} from "react";
 
-export default function CreateModal({ onClose, FormID, FormComponent, ModalTitle, SetState, State}: { onClose: () => void, FormID: string, FormComponent: React.FC<{id: string}>, ModalTitle: string, SetState: React.Dispatch<SetStateAction<number>>, State:number}){
+export default function CreateModal({ onClose, FormID, FormComponent, ModalTitle, UpdateRender}: { onClose: () => void, FormID: string, FormComponent: React.FC<{ id: string, onClose: () => void, UpdateRender: () => void }>, ModalTitle: string, UpdateRender: () =>void}){
 
     return (
-        <div className={"Modal"} id={"Create"} onSubmit={() => HandleSubmit(onClose, SetState, State)}>
+        <div className={"Modal"} id={"Create"}>
             <div id={"Form"}>
                 <h2 id={"Modal-Title"}> {ModalTitle} </h2>
 
-                 <FormComponent id={FormID}/>
+                 <FormComponent id={FormID} onClose={onClose} UpdateRender={UpdateRender}/>
 
                 <div id={"Submit-Area"}>
                     <button className={"FormButton"} id={"Submit"} form={"CreateInput"}>
@@ -21,11 +21,6 @@ export default function CreateModal({ onClose, FormID, FormComponent, ModalTitle
             </div>
         </div>
     )
-}
-
-function HandleSubmit(SetSubmit: React.Dispatch<SetStateAction<boolean>>, SetState: React.Dispatch<SetStateAction<number>>, State: number){
-    SetSubmit(false)
-    SetState(State => State + 1)
 }
 
 

@@ -10,7 +10,7 @@ export default function App() {
     const [ItemState, ChangeItemState] = useState(0)
   return (
     <div className="App">
-      <UtilityBar State={ItemState} SetState={ChangeItemState}/>
+      <UtilityBar State={ItemState} UpdateState={() => ChangeItemState(ItemState => ItemState + 1)}/>
         <div id={"Main-Section"}>
             <HeaderInfo State={ItemState}/>
             <MainDashboard State={ItemState}/>
