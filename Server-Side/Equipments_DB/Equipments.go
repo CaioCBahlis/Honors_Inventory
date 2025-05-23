@@ -4,7 +4,9 @@ import (
 	"Honors_Inventory/Server-Side/Locations_DB"
 	"database/sql"
 	"errors"
+	"fmt"
 	"log"
+	"time"
 )
 
 type Equipment struct {
@@ -18,6 +20,10 @@ type Equipment struct {
 	Inserted_at           string `json:"inserted_at"`
 }
 
+type message struct {
+	Message string `json:"message"`
+}
+
 func CreateEquipments(Connection *sql.DB, model, equipment_type string) error {
 	Sql_Query := "INSERT INTO equipment(model, equipment_type, equipment_status, location_id) VALUES ($1, $2, $3, $4)"
 
@@ -29,6 +35,9 @@ func CreateEquipments(Connection *sql.DB, model, equipment_type string) error {
 		log.Printf("Fail Inserting into the Equipments table: %v", err)
 		return err
 	}
+
+	UpdateAuditLogs(Connection, "Created", model+" "+equipment_type)
+
 	return nil
 }
 
@@ -74,6 +83,8 @@ func RemoveEquipment(Connection *sql.DB, id int) error {
 		return errors.New("Cannot Delete Time-Tracker id=1")
 	}
 
+	UpdateAuditLogs(Connection, "Removed", fmt.Sprintf("Equipment id#%d", id))
+
 	return nil
 }
 
@@ -83,6 +94,8 @@ func UpdateEquipment(Connection *sql.DB, id int, NewModel, NewType, NewStatus st
 	if err != nil {
 		log.Printf("Fail updating the Equipment: %v", err)
 	}
+
+	UpdateAuditLogs(Connection, "Updated", fmt.Sprintf("Equipment id#%d", id))
 
 	return nil
 }
@@ -121,19 +134,22 @@ func EquipmentTransfer(Connection *sql.DB, id int, room_name string) error {
 		log.Printf("Fail Updating Location: %v", err)
 		return err
 	}
+
+	UpdateAuditLogs(Connection, "Transfered", fmt.Sprintf("Equipment id#%d", id))
+
 	return nil
 }
 
-func GetEquipments(Connection *sql.DB) ([]Equipment, error) {
-	Sql_Query := `SELECT 
-  					e.*, 
-  					l.room_name, 
-  					l.building_type
-					FROM equipment e
-					JOIN locations l ON e.location_id = l.id
-					WHERE e.id > 1
-					ORDER BY id 
-	`
+func GetEquipments(Connection *sql.DB, Order string) ([]Equipment, error) {
+	Sql_Query := `
+    SELECT 
+        e.*, 
+        l.room_name, 
+        l.building_type
+    FROM equipment e
+    JOIN locations l ON e.location_id = l.id
+    WHERE e.id > 1
+    ORDER BY ` + Order
 
 	rows, err := Connection.Query(Sql_Query)
 	if err != nil {
@@ -197,4 +213,42 @@ func GetLastInsertion(Connection *sql.DB) (string, error) {
 	}
 
 	return time, err
+}
+
+func GetAuditLogs(Connection *sql.DB) ([]message, error) {
+	MyQuery := `SELECT message FROM audit ORDER BY id DESC limit 10 `
+
+	rows, err := Connection.Query(MyQuery)
+	if err != nil {
+		log.Printf("Error Getting audit logs: %v", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var MyLogs []message
+	for rows.Next() {
+		var MyMessage message
+		err = rows.Scan(&MyMessage.Message)
+		if err != nil {
+			log.Printf("Error Scanning Audit Logs Rows: %v", err)
+			return nil, err
+		}
+		MyLogs = append(MyLogs, MyMessage)
+	}
+
+	return MyLogs, nil
+}
+
+func UpdateAuditLogs(Connection *sql.DB, OP_Type string, Data string) {
+	loc, _ := time.LoadLocation("America/New_York")
+	tampaNow := time.Now().In(loc)
+	short := tampaNow.Format("2006-01-02 15:04:05")
+
+	msg := fmt.Sprintf("Rocky The Bull %s  %s at %v", OP_Type, Data, short)
+
+	MyQuery := `INSERT INTO audit(message) VALUES($1)`
+	_, err := Connection.Exec(MyQuery, msg)
+	if err != nil {
+		log.Printf("Fail Updating AuditLogs: %v", err)
+	}
 }

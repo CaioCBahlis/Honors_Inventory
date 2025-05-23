@@ -8,7 +8,7 @@ export default function HeaderInfo(props: {State: number}){
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await fetch("http://localhost:8080/API/GetEquipmentInfo");
+                const res = await fetch("http://localhost:8080/API/GetEquipmentInfo", {cache: "no-cache"});
                 const json = await res.json();
                 setData(json);
             } catch (err) {

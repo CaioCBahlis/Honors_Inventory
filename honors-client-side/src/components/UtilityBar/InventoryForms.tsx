@@ -1,4 +1,6 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
+
+
 
 export function CreateForm(props: {id:string, onClose: () => void, UpdateRender: () => void}){
     return (
@@ -10,7 +12,8 @@ export function CreateForm(props: {id:string, onClose: () => void, UpdateRender:
 
                 <label> Equipment Type
                         <Equipment_Type/>
-                    </label>
+                </label>
+
             </form>
         </div>
     )
@@ -73,14 +76,47 @@ export function DeleteForm(props: {id:string, onClose: () => void, UpdateRender:
 
 }
 
+export function AuditForm(props: {id:string, onClose: () => void, UpdateRender: () => void}){
+    type Message = {
+     message: string;
+    };
+    const [Message, SetMessages] = useState<Message[]>([])
+
+
+    useEffect(() => {
+       fetch(`http://localhost:8080/API/GetAuditLogs`)
+           .then(res => {
+                if (!res.ok) throw new Error("Failed to Get Audit Logs");
+                return res.json();
+        })
+           .then(data => SetMessages(data))
+    }, [])
+
+
+    return (
+        <div id={props.id}>
+            <form id={"CreateInput"}
+                  onSubmit={(event) => HandleSubmit(event, "RemoveEquipment", "DELETE", props.onClose, props.UpdateRender)}>
+                  <ul id={"Audit-Entries"}>
+                      {Message.map(message => (
+                 <li className={"Audit-Entry"}>
+                    <p> {message.message} </p>
+                 </li>
+                      ))};
+                  </ul>
+
+            </form>
+        </div>
+    )
+}
+
 
 function HandleSubmit(event: React.FormEvent<HTMLFormElement>, endpoint: string, Method: string, onClose: () => void, UpdateRender: () => void) {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
     const data: Record<string, string> = {};
 
-    onClose()
-    UpdateRender()
+
 
     formData.forEach((value, key) => {
         data[key] = value.toString();
@@ -96,14 +132,16 @@ function HandleSubmit(event: React.FormEvent<HTMLFormElement>, endpoint: string,
         body: JSON.stringify(data)
     })
     .then((res) => {
-      if (!res.ok) throw new Error("Failed to submit");
+        onClose()
+        UpdateRender()
+      if (!res.ok) throw new Error("Failed to submit the form");
       return res.json();
     })
     .then((responseData) => {
-      console.log("Success:", responseData);
+      console.log("Success :) :", responseData);
     })
     .catch((error) => {
-      console.error("Error:", error);
+      console.error("Error submitting the form:", error);
     });
 }
 

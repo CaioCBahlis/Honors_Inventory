@@ -3,6 +3,7 @@ package API
 import (
 	"Honors_Inventory/Server-Side/Equipments_DB"
 	"encoding/json"
+	"github.com/go-chi/chi/v5"
 	"log"
 	"net/http"
 )
@@ -27,7 +28,13 @@ func GetMaintenanceEquipment(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetEquipments(w http.ResponseWriter, r *http.Request) {
-	Equipments, err := Equipments_DB.GetEquipments(Connection)
+	Order_Param := chi.URLParam(r, "order_param")
+	log.Println("Order Param: ", Order_Param)
+	if Order_Param == "" {
+		Order_Param = "id"
+	}
+
+	Equipments, err := Equipments_DB.GetEquipments(Connection, Order_Param)
 	if err != nil {
 		log.Printf("API coudln't retrieve items: %v\n", err)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -70,6 +77,24 @@ func GetLastInsert(w http.ResponseWriter, r *http.Request) {
 	MyJson, err := json.Marshal(Time)
 	if err != nil {
 		log.Printf("Failed to Marshall Time: %v\n", err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(MyJson)
+}
+
+func GetAuditLogs(w http.ResponseWriter, r *http.Request) {
+	Logs, err := Equipments_DB.GetAuditLogs(Connection)
+	if err != nil {
+		log.Printf("API coudln't retrieve logs: %v\n", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+	}
+
+	MyJson, err := json.Marshal(Logs)
+	if err != nil {
+		log.Printf("Failed to Marshal the audit logs: %v\n", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 	}
 
 	w.Header().Set("Content-Type", "application/json")
