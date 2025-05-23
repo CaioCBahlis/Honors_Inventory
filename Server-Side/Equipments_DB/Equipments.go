@@ -3,6 +3,7 @@ package Equipments_DB
 import (
 	"Honors_Inventory/Server-Side/Locations_DB"
 	"database/sql"
+	"errors"
 	"log"
 )
 
@@ -11,13 +12,16 @@ type Equipment struct {
 	Model                 string `json:"model"`
 	Equipment_type        string `json:"equipment_type"`
 	Equipment_Status      string `json:"equipment_status"`
-	Equipment_Location_ID int    `json:"equipment_location_id"`
+	Equipment_Location_ID string `json:"equipment_location_id"`
+	Equipment_Room        string `json:"equipment_room"`
+	Equipment_Room_Type   string `json:"equipment_room_type"`
+	Inserted_at           string `json:"inserted_at"`
 }
 
 func CreateEquipments(Connection *sql.DB, model, equipment_type string) error {
 	Sql_Query := "INSERT INTO equipment(model, equipment_type, equipment_status, location_id) VALUES ($1, $2, $3, $4)"
 
-	location_id := 1              //All New Equipments default value is the storage (Foreign Key = 1);
+	location_id := 3              //All New Equipments default value is the storage (Foreign Key = 3);
 	equipment_status := "Working" // I figured it doesn't make sense to add broken equipment to the Inventory, so default is Working
 
 	_, err := Connection.Exec(Sql_Query, model, equipment_type, equipment_status, location_id)
@@ -49,19 +53,32 @@ func SearchEquipments(Connection *sql.DB, model, equipment_type, equipment_statu
 }
 
 func RemoveEquipment(Connection *sql.DB, id int) error {
-	Sql_Query := "DELETE FROM equipment WHERE id=$1"
+	Sql_Query := `WITH deleted AS (
+ 					 DELETE FROM equipment
+  					WHERE id = $1
+						)
+			UPDATE equipment
+			SET inserted_at = NOW()
+			WHERE id = 1;
+		`
+	//This looks really weird, but is simply deletes the element at the given id, and updates the time of the first item,
+	//since I'm maintaining the time of the last change, and I'm deleting an element, I need something else to keep the time
+	// id=1 is my time tracker, which is not displayed in the table
 
 	_, err := Connection.Exec(Sql_Query, id)
 	if err != nil {
 		log.Printf("Fail Deleting Items from Equipment Table: %v", err)
 		return err
 	}
+	if id == 1 {
+		return errors.New("Cannot Delete Time-Tracker id=1")
+	}
 
 	return nil
 }
 
 func UpdateEquipment(Connection *sql.DB, id int, NewModel, NewType, NewStatus string) error {
-	Sql_Query := "UPDATE equipment SET model=$1, equipment_type=$2, equipment_status=$3 where id=$4"
+	Sql_Query := "UPDATE equipment SET model=$1, equipment_type=$2, equipment_status=$3, inserted_at=NOW() where id=$4"
 	_, err := Connection.Exec(Sql_Query, NewModel, NewType, NewStatus, id)
 	if err != nil {
 		log.Printf("Fail updating the Equipment: %v", err)
@@ -90,10 +107,10 @@ func EquipmentsForMaintenace(Connection *sql.DB) ([]Equipment, error) {
 	return ForMaintenace, nil
 }
 
-func EquipmentTransfer(Connection *sql.DB, id int, room_name, building_type string) error {
-	Sql_Query := "UPDATE equipment SET location_id=$1 WHERE id=$2"
+func EquipmentTransfer(Connection *sql.DB, id int, room_name string) error {
+	Sql_Query := "UPDATE equipment SET location_id=$1, inserted_at=NOW() WHERE id=$2"
 
-	Location_Id, err := Locations_DB.GetLocationId(Connection, room_name, building_type)
+	Location_Id, err := Locations_DB.GetLocationId(Connection, room_name)
 	if err != nil {
 		log.Printf("Error Getting Location Id: %v", err)
 		return err
@@ -108,7 +125,15 @@ func EquipmentTransfer(Connection *sql.DB, id int, room_name, building_type stri
 }
 
 func GetEquipments(Connection *sql.DB) ([]Equipment, error) {
-	Sql_Query := "SELECT * FROM equipment"
+	Sql_Query := `SELECT 
+  					e.*, 
+  					l.room_name, 
+  					l.building_type
+					FROM equipment e
+					JOIN locations l ON e.location_id = l.id
+					WHERE e.id > 1
+					ORDER BY id 
+	`
 
 	rows, err := Connection.Query(Sql_Query)
 	if err != nil {
@@ -120,11 +145,12 @@ func GetEquipments(Connection *sql.DB) ([]Equipment, error) {
 	defer rows.Close()
 	for rows.Next() {
 		var MyEquipment Equipment
-		err = rows.Scan(&MyEquipment.Id, &MyEquipment.Model, &MyEquipment.Equipment_type, &MyEquipment.Equipment_Status, &MyEquipment.Equipment_Location_ID)
+		err = rows.Scan(&MyEquipment.Id, &MyEquipment.Model, &MyEquipment.Equipment_type, &MyEquipment.Equipment_Status, &MyEquipment.Equipment_Location_ID, &MyEquipment.Inserted_at, &MyEquipment.Equipment_Room, &MyEquipment.Equipment_Room_Type)
 		if err != nil {
 			log.Printf("Error Scanning Rows: %v", err)
 			return nil, err
 		}
+
 		Equipments = append(Equipments, MyEquipment)
 	}
 
@@ -150,4 +176,25 @@ func GetEquipmentsInfo(Connection *sql.DB) ([]int, error) {
 	}
 
 	return []int{total, Warehouse, Maintenance}, nil
+}
+
+func GetLastInsertion(Connection *sql.DB) (string, error) {
+	My_Query := `SELECT inserted_at,
+       to_char(
+    inserted_at AT TIME ZONE 'America/New_York',
+    'YYYY-MM-DD HH24:MI:SS TZ')
+	 AS insert_at_tampa FROM equipment
+		ORDER BY inserted_at DESC ;
+	`
+
+	var val string
+	var time string
+
+	err := Connection.QueryRow(My_Query).Scan(&val, &time)
+	if err != nil {
+		log.Printf("Error Scanning Time rows: %v", err)
+		return "", err
+	}
+
+	return time, err
 }

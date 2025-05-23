@@ -87,7 +87,6 @@ func TransferEquipment(w http.ResponseWriter, r *http.Request) {
 	ID, _ := strconv.Atoi(id)
 
 	var NewLocation Location
-	log.Println(NewLocation.Room_name, NewLocation.Building_type)
 
 	err := json.NewDecoder(r.Body).Decode(&NewLocation)
 	if err != nil {
@@ -96,7 +95,7 @@ func TransferEquipment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = Equipments_DB.EquipmentTransfer(Connection, ID, NewLocation.Room_name, NewLocation.Building_type)
+	err = Equipments_DB.EquipmentTransfer(Connection, ID, NewLocation.Room_name)
 	if err != nil {
 		log.Printf("API coudln't transfer Equipment: %v\n", err)
 		return

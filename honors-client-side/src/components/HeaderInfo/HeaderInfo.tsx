@@ -1,7 +1,7 @@
 import React from "react";
 import {useEffect, useState} from "react";
 
-export default function HeaderInfo(){
+export default function HeaderInfo(props: {State: number}){
     const [data, setData] = useState<any>(0);
     const [loading, setLoading] = useState(true);
 
@@ -19,7 +19,7 @@ export default function HeaderInfo(){
         };
 
         fetchData();
-    }, []);
+    }, [props.State]);
 
 
     return (

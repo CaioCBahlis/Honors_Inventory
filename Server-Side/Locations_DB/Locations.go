@@ -2,9 +2,13 @@ package Locations_DB
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 )
+
+type Locations struct {
+	Room_Name     string
+	building_type string
+}
 
 func CreateLocations(Connection *sql.DB, room_name, building_type string) error {
 	Sql_Query := "INSERT INTO locations(room_name, building_type) VALUES ($1, $2);"
@@ -18,12 +22,11 @@ func CreateLocations(Connection *sql.DB, room_name, building_type string) error 
 	return nil
 }
 
-func GetLocationId(Connection *sql.DB, room_name, building_type string) (int, error) {
-	Sql_Query := "SELECT id FROM locations WHERE room_name = $1 AND building_type = $2;"
-	fmt.Println(room_name, building_type)
+func GetLocationId(Connection *sql.DB, room_name string) (int, error) {
+	Sql_Query := "SELECT id FROM locations WHERE room_name = $1;"
 
 	var id int
-	rows, err := Connection.Query(Sql_Query, room_name, building_type)
+	rows, err := Connection.Query(Sql_Query, room_name)
 	if err != nil {
 		log.Printf("Fail retrieving Location_ID from database: %v", err)
 		return -1, err
@@ -39,4 +42,17 @@ func GetLocationId(Connection *sql.DB, room_name, building_type string) (int, er
 
 	return id, nil
 
+}
+
+func GetLocationFromID(Connection *sql.DB, id string) (Locations, error) {
+	Sql_Query := "SELECT (room_name, building_type) FROM locations WHERE id = $1;"
+	var MyLocation Locations
+
+	err := Connection.QueryRow(Sql_Query, id).Scan(&MyLocation.Room_Name, &MyLocation.building_type)
+	if err != nil {
+		log.Printf("Fail Retrieving Location from database: %v", err)
+		return Locations{}, err
+	}
+
+	return MyLocation, nil
 }

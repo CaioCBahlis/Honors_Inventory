@@ -3,30 +3,22 @@ import logo from './logo.svg';
 import './App.css';
 import UtilityBar from "./components/UtilityBar/Utility-bar";
 import HeaderInfo from "./components/HeaderInfo/HeaderInfo";
+import MainDashboard from "./components/DashBoard/DashBoard";
 
 
 export default function App() {
+    const [ItemState, ChangeItemState] = useState(0)
   return (
     <div className="App">
-      <UtilityBar/>
+      <UtilityBar State={ItemState} SetState={ChangeItemState}/>
         <div id={"Main-Section"}>
-            <HeaderInfo/>
-            <MainDashboard/>
+            <HeaderInfo State={ItemState}/>
+            <MainDashboard State={ItemState}/>
         </div>
     </div>
   );
 }
 
-
-function MainDashboard(){
-    return (
-        <div id={"MainDashboard"}>
-
-
-
-        </div>
-    )
-}
 
 
 

@@ -27,9 +27,9 @@ func GetMaintenanceEquipment(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetEquipments(w http.ResponseWriter, r *http.Request) {
-	Equipments, err := Equipments_DB.EquipmentsForMaintenace(Connection)
+	Equipments, err := Equipments_DB.GetEquipments(Connection)
 	if err != nil {
-		log.Printf("API coudln't retrieve items for maintenace: %v\n", err)
+		log.Printf("API coudln't retrieve items: %v\n", err)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
@@ -53,6 +53,23 @@ func GetEquipmentInfo(w http.ResponseWriter, r *http.Request) {
 	MyJson, err := json.Marshal(Equipment_Info)
 	if err != nil {
 		log.Printf("Failed to Marshall equipment info to JSON: %v\n", err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(MyJson)
+}
+
+func GetLastInsert(w http.ResponseWriter, r *http.Request) {
+	Time, err := Equipments_DB.GetLastInsertion(Connection)
+	if err != nil {
+		log.Printf("API coudln't retrieve last insert time: %v\n", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	MyJson, err := json.Marshal(Time)
+	if err != nil {
+		log.Printf("Failed to Marshall Time: %v\n", err)
 	}
 
 	w.Header().Set("Content-Type", "application/json")

@@ -13,6 +13,7 @@ func RouterSetup(r *chi.Mux, db *sql.DB) {
 	r.Get("/API/GetMaintenance", API.GetMaintenanceEquipment)
 	r.Get("/API/GetEquipments", API.GetEquipments)
 	r.Get("/API/GetEquipmentInfo", API.GetEquipmentInfo)
+	r.Get("/API/GetLastInsert", API.GetLastInsert)
 
 	r.Post("/API/AddEquipment", API.AddEquipment)
 	r.Post("/API/SearchEquipment", API.SearchEquipment)

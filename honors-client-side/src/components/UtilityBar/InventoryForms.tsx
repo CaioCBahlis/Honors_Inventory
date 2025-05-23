@@ -25,15 +25,15 @@ export function EditForm(props: {id:string}){
                     <input type={"text"} name={"id"} required/>
                 </label>
 
-                <label> Model
+                <label> New Model
                     <input type={"text"} name={"model"} required/>
                 </label>
 
-                <label> Equipment Type
+                <label> New Equipment Type
                     <Equipment_Type/>
                 </label>
 
-                <label> Equipment Status
+                <label> New Equipment Status
                    <Equipment_Status/>
                 </label>
 
@@ -51,11 +51,7 @@ export function TransferForm(props: { id: string }) {
                 </label>
 
                 <label> Room Name
-                    <input type={"text"} name={"room_name"} required/>
-                </label>
-
-                <label> Building Type
-                    <Building_Type/>
+                    <Room_Name/>
                 </label>
 
             </form>
@@ -147,17 +143,41 @@ function Equipment_Type(){
      )
 }
 
-function Building_Type(){
+function Room_Name() {
+    return (
+        <select name={"room_name"}>
+            <option value="Honors 401A"> Honors 401A</option>
+
+            <option value="Honors Kitchen"> Honors Kitchen</option>
+
+            <option value="Office 1"> Office 1</option>
+
+            <option value="Honors Warehouse"> Honors Warehouse</option>
+
+            <option value="HON 305E"> HON 305E</option>
+
+            <option value="HON 418E"> HON 418E</option>
+
+            <option value="Office 2"> Office 2</option>
+
+            <option value="HON 411B"> HON 411B</option>
+        </select>
+    )
+}
+
+function Building_Type() {
 
     return (
         <select name={"building_type"}>
-            <option value="Warehouse"> Warehouse </option>
+            <option value="Warehouse"> Warehouse</option>
 
-            <option value="Classroom"> Classroom </option>
+            <option value="Classroom"> Classroom</option>
 
-            <option value="Office">  Office </option>
+            <option value="Office"> Office</option>
 
-            <option value="Other">  Other </option>
+            <option value="Lab"> Lab</option>
+
+            <option value="Other"> Other</option>
         </select>
     )
 
