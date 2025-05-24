@@ -102,7 +102,7 @@ func UpdateEquipment(Connection *sql.DB, id int, NewModel, NewType, NewStatus st
 }
 
 func EquipmentsForMaintenace(Connection *sql.DB) ([]Equipment, error) {
-	Sql_Query := "Select * FROM equipment WHERE equipment_status NOT LIKE 'working'"
+	Sql_Query := "SELECT * FROM equipment WHERE equipment_status IN ('Broken', 'Needs Maintenance')"
 	rows, err := Connection.Query(Sql_Query)
 	if err != nil {
 		log.Printf("Fail Getting Items that need Maitenance: %v", err)

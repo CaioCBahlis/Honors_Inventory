@@ -14,31 +14,53 @@ INSERT INTO audit(message) VALUES
 
 
 INSERT INTO equipment (model, equipment_type, equipment_status, location_id) VALUES
-
-  ('Dell XPS 13',     'Laptop',   'Working',           1),
-  ('MacBook Pro 16',  'Laptop',   'Needs Maintenance', 5),
-
-
-  ('HP EliteDesk 800','Desktop',  'Working',           3),
-  ('Dell OptiPlex 7090','Desktop','Broken',            7),
-
-
-  ('iPad Air (5th)',  'Tablet',   'Missing',           2),
-  ('Samsung Galaxy Tab S8','Tablet','Working',        8),
-
-
-  ('Samsung 24"',     'Monitor',  'Working',           4),
-  ('LG UltraFine 27"','Monitor',  'Needs Maintenance', 6),
-
-
-  ('Logitech K380',   'Keyboard', 'Working',           1),
-
-
-  ('Logitech M185',   'Mouse',    'Broken',            3),
-
-
-  ('Canon PIXMA TS5320','Printer','Working',           4),
-
-
-  ('Epson PowerLite X49','Projector','Needs Maintenance',2);
-
+    ('Dell XPS 13', 'Laptop', 'Missing', 1),
+  ('Epson PowerLite X49', 'Projector', 'Working', 2),
+  ('MacBook Pro 16', 'Laptop', 'Needs Maintenance', 1),
+  ('Logitech K380', 'Keyboard', 'Needs Maintenance', 1),
+  ('HP EliteDesk 800', 'Desktop', 'Broken', 1),
+  ('iPad Air (5th)', 'Tablet', 'Broken', 4),
+  ('iPad Air (5th)', 'Tablet', 'Needs Maintenance', 5),
+  ('Logitech K380', 'Keyboard', 'Missing', 4),
+  ('iPad Air (5th)', 'Tablet', 'Missing', 4),
+  ('Samsung 24"', 'Monitor', 'Missing', 3),
+  ('Logitech K380', 'Keyboard', 'Broken', 2),
+  ('Logitech M185', 'Mouse', 'Missing', 3),
+  ('Logitech M185', 'Mouse', 'Missing', 4),
+  ('Canon PIXMA TS5320', 'Printer', 'Working', 4),
+  ('HP EliteDesk 800', 'Desktop', 'Working', 4),
+  ('Samsung Galaxy Tab S8', 'Tablet', 'Broken', 1),
+  ('HP EliteDesk 800', 'Desktop', 'Broken', 3),
+  ('Canon PIXMA TS5320', 'Printer', 'Broken', 4),
+  ('Dell OptiPlex 7090', 'Desktop', 'Missing', 1),
+  ('Samsung 24"', 'Monitor', 'Broken', 1),
+  ('Logitech K380', 'Keyboard', 'Needs Maintenance', 2),
+  ('Epson PowerLite X49', 'Projector', 'Broken', 5),
+  ('Logitech K380', 'Keyboard', 'Broken', 5),
+  ('HP EliteDesk 800', 'Desktop', 'Missing', 5),
+  ('Samsung 24"', 'Monitor', 'Working', 4),
+  ('Logitech M185', 'Mouse', 'Working', 3),
+  ('Logitech M185', 'Mouse', 'Broken', 3),
+  ('Dell XPS 13', 'Laptop', 'Working', 1),
+  ('MacBook Pro 16', 'Laptop', 'Missing', 2),
+  ('Dell OptiPlex 7090', 'Desktop', 'Working', 3),
+  ('Canon PIXMA TS5320', 'Printer', 'Broken', 1),
+  ('Canon PIXMA TS5320', 'Printer', 'Working', 1),
+  ('Samsung Galaxy Tab S8', 'Tablet', 'Missing', 2),
+  ('Logitech M185', 'Mouse', 'Needs Maintenance', 5),
+  ('Logitech M185', 'Mouse', 'Working', 1),
+  ('MacBook Pro 16', 'Laptop', 'Broken', 3),
+  ('Canon PIXMA TS5320', 'Printer', 'Needs Maintenance', 6),
+  ('Dell OptiPlex 7090', 'Desktop', 'Broken', 4),
+  ('MacBook Pro 16', 'Laptop', 'Working', 3),
+  ('Samsung Galaxy Tab S8', 'Tablet', 'Needs Maintenance', 3),
+  ('Epson PowerLite X49', 'Projector', 'Broken', 3),
+  ('HP EliteDesk 800', 'Desktop', 'Needs Maintenance', 3),
+  ('Samsung 24"', 'Monitor', 'Needs Maintenance', 2),
+  ('Logitech K380', 'Keyboard', 'Working', 2),
+  ('Samsung Galaxy Tab S8', 'Tablet', 'Working', 4),
+  ('MacBook Pro 16', 'Laptop', 'Working', 1),
+  ('Dell XPS 13', 'Laptop', 'Broken', 5),
+  ('Dell XPS 13', 'Laptop', 'Needs Maintenance', 6),
+  ('Samsung 24"', 'Monitor', 'Broken', 2),
+  ('iPad Air (5th)', 'Tablet', 'Working', 4);
