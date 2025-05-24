@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"time"
+	_ "time/tzdata"
 )
 
 type Equipment struct {
@@ -70,7 +71,7 @@ func RemoveEquipment(Connection *sql.DB, id int) error {
 			SET inserted_at = NOW()
 			WHERE id = 1;
 		`
-	//This looks really weird, but is simply deletes the element at the given id, and updates the time of the first item,
+	//This looks really weird, but it simply deletes the element at the given id, and updates the time of the first item,
 	//since I'm maintaining the time of the last change, and I'm deleting an element, I need something else to keep the time
 	// id=1 is my time tracker, which is not displayed in the table
 
@@ -177,7 +178,7 @@ func GetEquipmentsInfo(Connection *sql.DB) ([]int, error) {
 	MyStatsQuery := `
 	SELECT
 		COUNT (id) AS total,
-		COUNT(CASE WHEN location_id=3 THEN 1 END) AS Warehouse,
+		COUNT(CASE WHEN location_id=1 THEN 1 END) AS Warehouse,
 		COUNT(CASE WHEN equipment_status IN ('Needs Maintenance', 'Broken') THEN 1 END) as Maintenance
 	FROM equipment;
     `
@@ -191,7 +192,7 @@ func GetEquipmentsInfo(Connection *sql.DB) ([]int, error) {
 		return nil, err
 	}
 
-	return []int{total, Warehouse, Maintenance}, nil
+	return []int{total, Warehouse - 1, Maintenance}, nil
 }
 
 func GetLastInsertion(Connection *sql.DB) (string, error) {
@@ -240,6 +241,7 @@ func GetAuditLogs(Connection *sql.DB) ([]message, error) {
 }
 
 func UpdateAuditLogs(Connection *sql.DB, OP_Type string, Data string) {
+	fmt.Println("Updating Audit Logs")
 	Mylocation, _ := time.LoadLocation("America/New_York")
 	TampaTime := time.Now().In(Mylocation)
 	PrettyTime := TampaTime.Format("2006-01-02 15:04:05")

@@ -36,6 +36,12 @@ func main() {
 	BuildDir := http.Dir(ReactBuildPath)
 	StaticFileDir := http.Dir(filepath.Join(ReactBuildPath, "static"))
 
+	fsRoot := http.FileServer(http.Dir("static"))
+
+	r.Handle("/favicon*", fsRoot)
+	r.Handle("/manifest.json", fsRoot)
+	r.Handle("/asset-manifest.json", fsRoot)
+	r.Handle("/robots.txt", fsRoot)
 	r.Handle("/build/*", http.StripPrefix("/build/", http.FileServer(BuildDir)))
 	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(StaticFileDir)))
 
