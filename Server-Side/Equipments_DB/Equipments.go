@@ -240,11 +240,11 @@ func GetAuditLogs(Connection *sql.DB) ([]message, error) {
 }
 
 func UpdateAuditLogs(Connection *sql.DB, OP_Type string, Data string) {
-	loc, _ := time.LoadLocation("America/New_York")
-	tampaNow := time.Now().In(loc)
-	short := tampaNow.Format("2006-01-02 15:04:05")
+	Mylocation, _ := time.LoadLocation("America/New_York")
+	TampaTime := time.Now().In(Mylocation)
+	PrettyTime := TampaTime.Format("2006-01-02 15:04:05")
 
-	msg := fmt.Sprintf("Rocky The Bull %s  %s at %v", OP_Type, Data, short)
+	msg := fmt.Sprintf("Rocky The Bull %s  %s at %v", OP_Type, Data, PrettyTime)
 
 	MyQuery := `INSERT INTO audit(message) VALUES($1)`
 	_, err := Connection.Exec(MyQuery, msg)

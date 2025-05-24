@@ -102,7 +102,7 @@ export function AuditForm(props: {id:string, onClose: () => void, UpdateRender: 
                  <li className={"Audit-Entry"}>
                     <p> {message.message} </p>
                  </li>
-                      ))};
+                      ))}
                   </ul>
 
             </form>
