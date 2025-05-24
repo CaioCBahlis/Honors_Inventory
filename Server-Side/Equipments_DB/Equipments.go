@@ -216,8 +216,8 @@ func GetLastInsertion(Connection *sql.DB) (string, error) {
 	return time, err
 }
 
-func GetAuditLogs(Connection *sql.DB) ([]message, error) {
-	MyQuery := `SELECT message FROM audit ORDER BY id DESC limit 5 `
+func GetAuditLogsFromDB(Connection *sql.DB) ([]message, error) {
+	MyQuery := `SELECT message FROM audit ORDER BY id DESC limit 7`
 
 	rows, err := Connection.Query(MyQuery)
 	if err != nil {

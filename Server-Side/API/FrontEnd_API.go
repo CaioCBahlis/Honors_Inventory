@@ -85,7 +85,7 @@ func GetLastInsert(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetAuditLogs(w http.ResponseWriter, r *http.Request) {
-	Logs, err := Equipments_DB.GetAuditLogs(Connection)
+	Logs, err := Equipments_DB.GetAuditLogsFromDB(Connection)
 	if err != nil {
 		log.Printf("API coudln't retrieve logs: %v\n", err)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
