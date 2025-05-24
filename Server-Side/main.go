@@ -32,7 +32,7 @@ func main() {
 	RouterSetup(r, Connection)
 	defer Connection.Close()
 
-	ReactBuildPath := filepath.Join("..", "honors-client-side", "build")
+	ReactBuildPath := "static"
 	BuildDir := http.Dir(ReactBuildPath)
 	StaticFileDir := http.Dir(filepath.Join(ReactBuildPath, "static"))
 

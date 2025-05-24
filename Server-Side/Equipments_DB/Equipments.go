@@ -1,7 +1,7 @@
 package Equipments_DB
 
 import (
-	"Honors_Inventory/Server-Side/Locations_DB"
+	"Server-Side/Locations_DB"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -27,7 +27,7 @@ type message struct {
 func CreateEquipments(Connection *sql.DB, model, equipment_type string) error {
 	Sql_Query := "INSERT INTO equipment(model, equipment_type, equipment_status, location_id) VALUES ($1, $2, $3, $4)"
 
-	location_id := 3              //All New Equipments default value is the storage (Foreign Key = 3);
+	location_id := 1              //All New Equipments default value is the storage (Foreign Key = 1);
 	equipment_status := "Working" // I figured it doesn't make sense to add broken equipment to the Inventory, so default is Working
 
 	_, err := Connection.Exec(Sql_Query, model, equipment_type, equipment_status, location_id)

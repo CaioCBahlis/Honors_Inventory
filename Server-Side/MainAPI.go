@@ -1,7 +1,7 @@
 package main
 
 import (
-	"Honors_Inventory/Server-Side/API"
+	"Server-Side/API"
 	"database/sql"
 	"github.com/go-chi/chi/v5"
 )

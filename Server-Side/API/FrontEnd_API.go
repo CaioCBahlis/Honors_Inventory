@@ -1,7 +1,7 @@
 package API
 
 import (
-	"Honors_Inventory/Server-Side/Equipments_DB"
+	"Server-Side/Equipments_DB"
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
 	"log"
