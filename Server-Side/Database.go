@@ -15,6 +15,10 @@ func ConnectToDatabase() {
 		log.Fatal("Error loading .env file")
 	}
 
+	//There's Race Conditions between the deployment of postgres and the Go Server
+	//This reconnection attempts ensures the Server is always able to connect to the database,
+	// even if it is deployed later, fixing the race condition
+
 	for i := 0; i < 10; i++ {
 		Connection, err = sql.Open("postgres", os.Getenv("DATABASE_URL"))
 		if err != nil {
